@@ -29,6 +29,7 @@ namespace dab
             return mode_4::symbol_bits::value * mode_4::frame_symbols::value;
             break;
           }
+        return 0;
         }
 
       std::size_t fic_size(transmission_mode const mode) noexcept
@@ -48,6 +49,7 @@ namespace dab
             return mode_4::symbol_bits::value * mode_4::fic_symbols::value;
             break;
           }
+        return 0;
         }
 
       std::size_t punctured_codeword_size(transmission_mode const mode) noexcept
@@ -67,6 +69,7 @@ namespace dab
             return mode_4::fib_codeword_bits::value * 3;
             break;
           }
+        return 0;
         }
 
       std::size_t fic_codeword_size(transmission_mode const mode) noexcept
@@ -86,6 +89,7 @@ namespace dab
             return mode_4::fib_codeword_bits::value;
             break;
           }
+        return 0;
         }
 
       std::size_t fibs_in_codeword(transmission_mode const mode) noexcept
@@ -105,6 +109,7 @@ namespace dab
             return mode_4::fib_codeword_bits::value / 256;
             break;
           }
+        return 0;
         }
 
       std::size_t frame_symbols(transmission_mode const mode) noexcept
@@ -124,6 +129,7 @@ namespace dab
             return mode_4::frame_symbols::value;
             break;
           }
+        return 0;
         }
 
       std::size_t symbol_size(transmission_mode const mode) noexcept
@@ -143,6 +149,7 @@ namespace dab
             return mode_4::carriers::value * 2;
             break;
           }
+        return 0;
         }
 
       std::size_t msc_cifs(transmission_mode const mode) noexcept
@@ -162,6 +169,7 @@ namespace dab
             return mode_4::frame_cifs::value;
             break;
           }
+        return 0;
         }
 
       }
