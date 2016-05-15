@@ -49,6 +49,10 @@ namespace dab
       std::size_t symbol_size(transmission_mode const mode) noexcept;
 
       std::size_t msc_cifs(transmission_mode const mode) noexcept;
+
+      std::size_t carriers(transmission_mode const mode) noexcept;
+
+      std::size_t fft_length(transmission_mode const mode) noexcept;
       }
     }
 

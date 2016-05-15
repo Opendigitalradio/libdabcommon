@@ -172,6 +172,46 @@ namespace dab
         return 0;
         }
 
+      std::size_t carriers(transmission_mode const mode) noexcept
+        {
+        switch(mode)
+          {
+          case transmission_mode::mode_1:
+            return mode_1::carriers::value;
+            break;
+          case transmission_mode::mode_2:
+            return mode_2::carriers::value;
+            break;
+          case transmission_mode::mode_3:
+            return mode_3::carriers::value;
+            break;
+          case transmission_mode::mode_4:
+            return mode_4::carriers::value;
+            break;
+          }
+        return 0;
+        }
+
+      std::size_t fft_length(transmission_mode const mode) noexcept
+        {
+        switch(mode)
+          {
+          case transmission_mode::mode_1:
+            return mode_1::fft_length::value;
+            break;
+          case transmission_mode::mode_2:
+            return mode_2::fft_length::value;
+            break;
+          case transmission_mode::mode_3:
+            return mode_3::fft_length::value;
+            break;
+          case transmission_mode::mode_4:
+            return mode_4::fft_length::value;
+            break;
+          }
+        return 0;
+        }
+
       }
 
     }
