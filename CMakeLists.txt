@@ -53,7 +53,7 @@ if(BUILD_DOCUMENTATION_ONLY)
 else()
   find_package(Boost REQUIRED)
 
-  add_subdirectory("src")
+  #  add_subdirectory("src")
 
   if(WITH_TESTS)
     include(CUTE)
