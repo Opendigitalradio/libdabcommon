@@ -56,7 +56,11 @@ namespace dab
                std::size_t FrameSymbols,
                std::size_t FicSymbols,
                std::size_t FrameFibs,
-               std::size_t FrameCifs>
+               std::size_t FrameCifs,
+               std::size_t FrameDuration,
+               std::size_t GuardDuration,
+               std::size_t SymbolDuration,
+               std::size_t NullDuration>
       struct mode_descriptor
         {
         /**
@@ -152,6 +156,34 @@ namespace dab
          * @brief The length of the FFT used to demodulate the signal
          */
         using fft_length = std::integral_constant<std::size_t, detail::next_power_of_two(carriers::value)>;
+
+        /**
+         * @internal
+         *
+         * @brief The duration of a frame in microseconds
+         */
+        using frame_duration = std::integral_constant<std::size_t, FrameDuration>;
+
+        /**
+         * @internal
+         *
+         * @brief The duration of the guard in microseconds
+         */
+        using guard_duration = std::integral_constant<std::size_t, GuardDuration>;
+
+        /**
+         * @internal
+         *
+         * @brief The duration of a symbol without guard in microseconds
+         */
+        using symbol_duration = std::integral_constant<std::size_t, SymbolDuration>;
+
+        /**
+         * @internal
+         *
+         * @brief The duration of the null symbol in microseconds
+         */
+        using null_duration = std::integral_constant<std::size_t, NullDuration>;
         };
 
       /**
@@ -161,7 +193,7 @@ namespace dab
        *
        * This type alias generates the descriptor for DAB transport mode 1.
        */
-      using mode_1 = mode_descriptor<1536,  76, 3, 12, 4>;
+      using mode_1 = mode_descriptor<1536,  76, 3, 12, 4, 96000, 246, 1000, 1297>;
 
       /**
        * @internal
@@ -170,7 +202,7 @@ namespace dab
        *
        * This type alias generates the descriptor for DAB transport mode 2.
        */
-      using mode_2 = mode_descriptor< 384,  76, 3,  3, 1>;
+      using mode_2 = mode_descriptor< 384,  76, 3,  3, 1, 24000,  62,  250, 324>;
 
       /**
        * @internal
@@ -179,7 +211,7 @@ namespace dab
        *
        * This type alias generates the descriptor for DAB transport mode 3.
        */
-      using mode_3 = mode_descriptor< 192, 153, 8,  4, 1>;
+      using mode_3 = mode_descriptor< 192, 153, 8,  4, 1, 24000, 31,  125, 168>;
 
       /**
        * @internal
@@ -188,7 +220,7 @@ namespace dab
        *
        * This type alias generates the descriptor for DAB transport mode 4.
        */
-      using mode_4 = mode_descriptor< 768,  76, 3,  6, 2>;
+      using mode_4 = mode_descriptor< 768,  76, 3,  6, 2, 48000, 123, 500, 648>;
 
       }
 
