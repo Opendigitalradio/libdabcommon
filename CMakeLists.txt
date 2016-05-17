@@ -5,7 +5,7 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Debug CACHE STRING "The build type" FORCE)
 endif()
 
-option(WITH_TESTS                   "Build and run the unit tests." ON)
+option(WITH_COMMON_TESTS "Build and run the unit tests." ON)
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules")
 
@@ -51,7 +51,7 @@ if(BUILD_DOCUMENTATION_ONLY)
 else()
   find_package(Boost REQUIRED)
 
-  if(WITH_TESTS)
+  if(WITH_COMMON_TESTS)
     include(CUTE)
     include_directories(SYSTEM "third_party/cute")
     add_subdirectory(test)
