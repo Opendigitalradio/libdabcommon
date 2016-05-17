@@ -1,0 +1,43 @@
+arm-debug:
+  script:
+    - cd build
+    - CXX=clang++ cmake .. -DCMAKE_BUILD_TYPE=Debug -DWITH_ADDRESS_SANITIZER=ON -DWITH_UNDEFINED_SANITIZER=ON
+    - make -j$(nproc)
+  tags:
+    - arm
+  artifacts:
+    paths:
+      - build/cute-reports
+
+arm-release:
+  script:
+    - cd build
+    - CXX=clang++ cmake .. -DCMAKE_BUILD_TYPE=Release -DWITH_ADDRESS_SANITIZER=ON -DWITH_UNDEFINED_SANITIZER=ON
+    - make -j$(nproc)
+  tags:
+    - arm
+  artifacts:
+    paths:
+      - build/cute-reports
+
+x86_64-debug:
+  script:
+    - cd build
+    - CXX=clang++ cmake .. -DCMAKE_BUILD_TYPE=Debug -DWITH_ADDRESS_SANITIZER=ON -DWITH_UNDEFINED_SANITIZER=ON
+    - make -j$(nproc)
+  tags:
+    - x86_64
+  artifacts:
+    paths:
+      - build/cute-reports
+
+x86_64-release:
+  script:
+    - cd build
+    - CXX=clang++ cmake .. -DCMAKE_BUILD_TYPE=Release -DWITH_ADDRESS_SANITIZER=ON -DWITH_UNDEFINED_SANITIZER=ON
+    - make -j$(nproc)
+  tags:
+    - x86_64
+  artifacts:
+    paths:
+      - build/cute-reports
