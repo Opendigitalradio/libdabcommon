@@ -36,6 +36,8 @@ flags = [
     '-I',
     scriptPath + '/include',
     '-isystem',
+    scriptPath + '/third_party/moodycamel',
+    '-isystem',
     scriptPath + '/third_party/cute',
     '-Wall',
     '-Wextra',

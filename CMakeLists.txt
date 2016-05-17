@@ -44,6 +44,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -Os")
 
 include_directories("include")
+include_directories(SYSTEM "third_party/moodycamel")
 
 if(BUILD_DOCUMENTATION_ONLY)
   set(BUILD_DOCUMENTATION ON CACHE BOOL "Build the libdabcommon documentation." FORCE)
@@ -58,6 +59,8 @@ else()
 endif()
 
 if(HAS_PARENT)
-  set(DABCOMMON_INCLUDES "${PROJECT_SOURCE_DIR}/include" PARENT_SCOPE)
+  get_property(INCLUDES DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
+  set(DABCOMMON_INCLUDES "${INCLUDES}" PARENT_SCOPE)
   set(DABCOMMON_SOURCES  "${SOURCES}" PARENT_SCOPE)
 endif()
+
