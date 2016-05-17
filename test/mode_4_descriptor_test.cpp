@@ -1,4 +1,4 @@
-#include "types/mode_descriptor.h"
+#include "constants/transmission_modes.h"
 
 #include <cute/cute.h>
 #include <cute/cute_runner.h>
@@ -8,37 +8,37 @@
 
 void test_carriers_equals_768()
   {
-  ASSERT_EQUAL(768, dab::__internal_common::types::mode_4::carriers::value);
+  ASSERT_EQUAL(768, dab::transmission_modes::kTransmissionMode4.carriers);
   }
 
 void test_frame_symbols_equals_75()
   {
-  ASSERT_EQUAL(75, dab::__internal_common::types::mode_4::frame_symbols::value);
+  ASSERT_EQUAL(75, dab::transmission_modes::kTransmissionMode4.frame_symbols);
   }
 
 void test_fic_symbols_equals_3()
   {
-  ASSERT_EQUAL(3, dab::__internal_common::types::mode_4::fic_symbols::value);
+  ASSERT_EQUAL(3, dab::transmission_modes::kTransmissionMode4.fic_symbols);
   }
 
 void test_msc_symbols_equals_72()
   {
-  ASSERT_EQUAL(72, dab::__internal_common::types::mode_4::msc_symbols::value);
+  ASSERT_EQUAL(72, dab::transmission_modes::kTransmissionMode4.msc_symbols);
   }
 
 void test_frame_fibs_equals_6()
   {
-  ASSERT_EQUAL(6, dab::__internal_common::types::mode_4::frame_fibs::value);
+  ASSERT_EQUAL(6, dab::transmission_modes::kTransmissionMode4.frame_fibs);
   }
 
 void test_frame_cifs_equals_2()
   {
-  ASSERT_EQUAL(2, dab::__internal_common::types::mode_4::frame_cifs::value);
+  ASSERT_EQUAL(2, dab::transmission_modes::kTransmissionMode4.frame_cifs);
   }
 
 void test_fib_codeword_bits_equals_768()
   {
-  ASSERT_EQUAL(768, dab::__internal_common::types::mode_4::fib_codeword_bits::value);
+  ASSERT_EQUAL(768, dab::transmission_modes::kTransmissionMode4.fib_codeword_bits);
   }
 
 int main(int argc, char * * argv)
