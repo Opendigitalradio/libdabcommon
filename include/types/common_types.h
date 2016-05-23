@@ -53,7 +53,7 @@ namespace dab
    *
    * @brief The type of a queue for transporting samples
    */
-  using sample_queue_t = moodycamel::ReaderWriterQueue<__internal_common::sample_t>;
+  using sample_queue_t = moodycamel::BlockingReaderWriterQueue<__internal_common::sample_t>;
 
   }
 
