@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include "atomicops.h"
 #include <type_traits>
 #include <utility>
 #include <cassert>
@@ -14,6 +13,7 @@
 #if __cplusplus > 199711L
 #include <chrono>
 #endif
+#include "atomicops.h"
 
 
 // A lock-free queue for a single-consumer, single-producer architecture.
