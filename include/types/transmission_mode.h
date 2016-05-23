@@ -61,7 +61,7 @@ namespace dab
                                     std::uint8_t const frame_cifs,
                                     std::uint32_t const frame_duration,
                                     std::uint16_t const guard_duration,
-                                    std::uint16_t const symbol_duration,
+                                    std::uint16_t const useful_duration,
                                     std::uint16_t const null_duration)
           : id{id},
             carriers{carriers},
@@ -71,7 +71,7 @@ namespace dab
             frame_cifs{frame_cifs},
             frame_duration{frame_duration},
             guard_duration{guard_duration},
-            symbol_duration{symbol_duration},
+            useful_duration{useful_duration},
             null_duration{null_duration}
           {
 
@@ -138,30 +138,38 @@ namespace dab
         /**
          * @internal
          *
-         * @brief The duration of a frame in microseconds
+         * @brief The duration of a frame in samples @ 2.048 MSps
          */
         std::uint32_t const frame_duration;
 
         /**
          * @internal
          *
-         * @brief The duration of the guard in microseconds
+         * @brief The duration of the guard in samples @ 2.048 MSps
          */
         std::uint16_t const guard_duration;
 
         /**
          * @internal
          *
-         * @brief The duration of a symbol without guard in microseconds
+         * @brief The duration of a symbol without guard in samples @ 2.048 MSps
          */
-        std::uint16_t const symbol_duration;
+        std::uint16_t const useful_duration;
 
         /**
          * @internal
          *
-         * @brief The duration of the null symbol in microseconds
+         * @brief The duration of the null symbol in samples @ 2.048 MSps
          */
         std::uint16_t const null_duration;
+
+
+        /**
+         * @internal
+         *
+         * @brief The duration of a symbol with the guard in samples @ 2.048 MSps
+         */
+        std::uint16_t const symbol_duration = useful_duration + guard_duration;
 
         /**
          * @internal
