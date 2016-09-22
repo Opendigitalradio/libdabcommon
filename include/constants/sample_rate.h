@@ -4,6 +4,11 @@
 namespace dab
   {
 
+  /**
+   * @author Felix Morgner
+   *
+   * @brief This is the only currently supported sample rate (in Sps).
+   */
   auto constexpr kDefaultSampleRate = 2048000;
 
   }

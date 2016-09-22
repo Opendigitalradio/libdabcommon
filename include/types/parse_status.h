@@ -13,11 +13,11 @@ namespace dab
    **/
   enum struct parse_status : std::uint8_t
     {
-    invalid_crc,
-    invalid_address,
-    incomplete,
-    segment_lost,
-    ok
+    invalid_crc, ///< The CRC16 checksum was invalid
+    invalid_address, ///< The address did not match the expected one
+    incomplete, ///< There is still data missing
+    segment_lost, ///< At least one segment was missing
+    ok ///< Everything went well
     };
   }
 #endif //__DAB__PARSE_STATUS

@@ -10,6 +10,11 @@
 #include <utility>
 #include <vector>
 
+/**
+ * @author Felix Morgner
+ *
+ * @brief This namespace captures anything DAB related
+ */
 namespace dab
   {
 
@@ -54,6 +59,13 @@ namespace dab
    * @brief The type of a queue for transporting samples
    */
   using sample_queue_t = moodycamel::BlockingReaderWriterQueue<__internal_common::sample_t>;
+
+  /**
+   * @author Felix Morgner
+   *
+   * @brief The type of a queue for transporting symbols
+   */
+  using symbol_queue_t = moodycamel::BlockingReaderWriterQueue<std::vector<float>>;
 
   }
 

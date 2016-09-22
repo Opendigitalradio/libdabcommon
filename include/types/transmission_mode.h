@@ -15,9 +15,19 @@
 namespace dab
   {
 
+  /**
+   * @internal
+   *
+   * @author Felix Morgner
+   *
+   * @brief This namespace contains implementation details and should not be used by end users.
+   */
   namespace __internal_common
     {
 
+    /**
+     * @internal
+     */
     namespace types
       {
 
