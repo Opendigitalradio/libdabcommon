@@ -3,3 +3,4 @@ CUTE/[>=2.0]@fmorgner/stable
 
 [generators]
 cmake
+txt
