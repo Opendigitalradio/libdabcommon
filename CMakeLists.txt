@@ -1,58 +1,24 @@
-cmake_minimum_required(VERSION 3.0)
-project(dabcommon CXX)
-
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Release CACHE STRING "The build type" FORCE)
-endif()
-
-option(WITH_COMMON_TESTS            "Build and run the unit tests." OFF)
+cmake_minimum_required(VERSION 3.1)
+project("LibDABCommon"
+  LANGUAGES CXX
+  VERSION 1.0.1)
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules")
+set(CXX_VERSION "c++11")
 
-set(OUTPUT_PREFIX "${CMAKE_BINARY_DIR}/products/${CMAKE_BUILD_TYPE}" CACHE STRING "The build product prefix" FORCE)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${OUTPUT_PREFIX}/bin" CACHE STRING "The output path for executables" FORCE)
+include("CompilerSetup")
+include("ConanPackages")
 
-set(CMAKE_CXX_FLAGS "-std=c++11 -pedantic -Wall -Wextra -Werror")
+find_package(Threads REQUIRED)
 
-get_directory_property(HAS_PARENT PARENT_DIRECTORY)
+string(TOUPPER ${PROJECT_NAME} ${PROJECT_NAME}_UPPER)
+string(TOLOWER ${PROJECT_NAME} ${PROJECT_NAME}_LOWER)
 
-if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  option(WITH_ADDRESS_SANITIZER       "Include address/memory checks." OFF)
-  option(WITH_UNDEFINED_SANITIZER     "Include undefined behavior checks." OFF)
+option(${${PROJECT_NAME}_UPPER}_ENABLE_TESTS "Build and run the ${PROJECT_NAME} unit tests." OFF)
 
-  if(WITH_ADDRESS_SANITIZER OR WITH_UNDEFINED_SANITIZER)
-    string(APPEND CMAKE_CXX_FLAGS " -fno-omit-frame-pointer")
+add_subdirectory("include")
 
-    set(SANITIZERS "")
-
-    if(WITH_ADDRESS_SANITIZER)
-      list(APPEND SANITIZERS "address")
-    endif()
-
-    if(WITH_UNDEFINED_SANITIZER)
-      list(APPEND SANITIZERS "undefined")
-    endif()
-
-    string(REPLACE ";" "," SANITIZERS "${SANITIZERS}")
-    string(APPEND CMAKE_CXX_FLAGS " -fsanitize=${SANITIZERS}")
-  endif()
-endif()
-
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -g")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O3")
-
-include_directories("include")
-include_directories(SYSTEM "third_party/moodycamel")
-
-if(WITH_COMMON_TESTS AND NOT BUILD_DOCUMENTATION_ONLY)
-  include(CUTE)
-  include_directories(SYSTEM "third_party/cute")
+if(WITH_${${PROJECT_NAME}_LOWER}_TESTS AND NOT BUILD_DOCUMENTATION_ONLY)
+  include("CUTE")
   add_subdirectory(test)
 endif()
-
-
-if(HAS_PARENT)
-  get_property(INCLUDES DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
-  set(DABCOMMON_INCLUDES "${INCLUDES}" PARENT_SCOPE)
-endif()
-
