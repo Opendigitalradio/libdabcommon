@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0)
 project(dabcommon CXX)
 
 if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Debug CACHE STRING "The build type" FORCE)
+  set(CMAKE_BUILD_TYPE Release CACHE STRING "The build type" FORCE)
 endif()
 
 option(WITH_COMMON_TESTS            "Build and run the unit tests." OFF)
