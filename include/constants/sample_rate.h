@@ -1,5 +1,5 @@
-#ifndef __DAB_CONSTANTS__SAMPLE_RATE
-#define __DAB_CONSTANTS__SAMPLE_RATE
+#ifndef DABCOMMON_CONSTANTS__SAMPLE_RATE
+#define DABCOMMON_CONSTANTS__SAMPLE_RATE
 
 namespace dab
   {
@@ -14,4 +14,3 @@ namespace dab
   }
 
 #endif
-

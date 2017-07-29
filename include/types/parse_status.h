@@ -1,10 +1,11 @@
-#ifndef __DAB__PARSE_STATUS
-#define __DAB__PARSE_STATUS
+#ifndef DABCOMMON__PARSE_STATUS
+#define DABCOMMON__PARSE_STATUS
 
 #include <cstdint>
 
 namespace dab
   {
+
   /**
    * @author Tobias Stauber
    *
@@ -19,5 +20,7 @@ namespace dab
     segment_lost, ///< At least one segment was missing
     ok ///< Everything went well
     };
+
   }
-#endif //__DAB__PARSE_STATUS
+
+#endif

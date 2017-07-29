@@ -22,7 +22,7 @@ namespace dab
    *
    * @brief This namespace contains implementation details and should not be used by end users.
    */
-  namespace __internal_common
+  namespace internal
     {
 
     /**
@@ -31,7 +31,7 @@ namespace dab
     namespace types
       {
 
-      namespace detail
+      namespace impl
         {
         constexpr std::size_t next_power_of_two(std::size_t const value, std::size_t const start = 1)
           {
@@ -219,7 +219,7 @@ namespace dab
          *
          * @brief The length of the FFT used to demodulate the signal
          */
-        std::uint16_t const fft_length = detail::next_power_of_two(carriers);
+        std::uint16_t const fft_length = impl::next_power_of_two(carriers);
         };
 
       }

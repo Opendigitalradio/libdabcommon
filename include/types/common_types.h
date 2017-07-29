@@ -1,9 +1,7 @@
-#ifndef __DAB__TYPES__COMMON_TYPES
-#define __DAB__TYPES__COMMON_TYPES
+#ifndef DABCOMMON__TYPES__COMMON_TYPES
+#define DABCOMMON__TYPES__COMMON_TYPES
 
 #include "types/parse_status.h"
-
-#include <readerwriterqueue.h>
 
 #include <complex>
 #include <cstdint>
@@ -18,7 +16,7 @@
 namespace dab
   {
 
-  namespace __internal_common
+  namespace internal
     {
 
       /**
@@ -58,7 +56,7 @@ namespace dab
    *
    * @brief The type of a queue for transporting samples
    */
-  using sample_queue_t = moodycamel::BlockingReaderWriterQueue<__internal_common::sample_t>;
+  using sample_queue_t = moodycamel::BlockingReaderWriterQueue<internal::sample_t>;
 
   /**
    * @author Felix Morgner
