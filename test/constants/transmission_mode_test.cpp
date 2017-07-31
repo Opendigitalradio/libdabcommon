@@ -1,5 +1,7 @@
-#include "queue_suites/enqueueing_suite.h"
-#include "queue_suites/dequeueing_suite.h"
+#include "transmission_mode_suites/mode_1_suite.h"
+#include "transmission_mode_suites/mode_2_suite.h"
+#include "transmission_mode_suites/mode_3_suite.h"
+#include "transmission_mode_suites/mode_4_suite.h"
 
 #include <cute/cute_runner.h>
 #include <cute/cute_suite.h>
@@ -19,10 +21,12 @@ int main(int argc, char * * argv)
   auto success = true;
   auto runner = cute::makeRunner(listener, argc, argv);
 
-  using namespace dab::test::type::queue;
+  using namespace dab::test::constants::transmission_mode;
 
-  success &= CUTE_DESCRIPTIVE_RUN(enqueueing_tests, runner);
-  success &= CUTE_DESCRIPTIVE_RUN(dequeueing_tests, runner);
+  success &= CUTE_DESCRIPTIVE_RUN(mode_1_tests, runner);
+  success &= CUTE_DESCRIPTIVE_RUN(mode_2_tests, runner);
+  success &= CUTE_DESCRIPTIVE_RUN(mode_3_tests, runner);
+  success &= CUTE_DESCRIPTIVE_RUN(mode_4_tests, runner);
 
   return !success;
   }

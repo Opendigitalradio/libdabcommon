@@ -1,11 +1,11 @@
-#ifndef DABCOMMON_TEST_TYPES__QUEUE_ENQUEUEING_SUITE
-#define DABCOMMON_TEST_TYPES__QUEUE_ENQUEUEING_SUITE
+#ifndef DABCOMMON_TEST_TYPES_QUEUE__ENQUEUEING_SUITE
+#define DABCOMMON_TEST_TYPES_QUEUE__ENQUEUEING_SUITE
 
 #include <types/queue.h>
 
 #include <cute/cute.h>
 #include <cute/cute_suite.h>
-#include <cute/extensions/descriptive_test_class.h>
+#include <cute/extensions/descriptive_suite.h>
 
 #include <vector>
 
