@@ -2,6 +2,7 @@
 #define DABCOMMON__TYPES__COMMON_TYPES
 
 #include "types/parse_status.h"
+#include "types/queue.h"
 
 #include <complex>
 #include <cstdint>
@@ -56,14 +57,14 @@ namespace dab
    *
    * @brief The type of a queue for transporting samples
    */
-  using sample_queue_t = moodycamel::BlockingReaderWriterQueue<internal::sample_t>;
+  using sample_queue_t = internal::queue<internal::sample_t>;
 
   /**
    * @author Felix Morgner
    *
    * @brief The type of a queue for transporting symbols
    */
-  using symbol_queue_t = moodycamel::BlockingReaderWriterQueue<std::vector<float>>;
+  using symbol_queue_t = internal::queue<std::vector<float>>;
 
   }
 

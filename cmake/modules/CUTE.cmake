@@ -281,6 +281,7 @@ function(cute_test TEST_NAME)
     message(STATUS "Registering CUTE test '${CUTE_TEST_GROUP}::${TEST_NAME}'")
     add_executable(${TEST_TARGET_NAME} ${TEST_SOURCE_FILE} ${CUTE_TEST_DEPENDENCIES})
     target_link_libraries(${TEST_TARGET_NAME} ${CUTE_TEST_LIBRARIES})
+    target_compile_definitions(${TEST_TARGET_NAME} PRIVATE "-DCUTE_TESTING")
     add_test(NAME "${TEST_TARGET_NAME}"
       WORKING_DIRECTORY "${${CUTE_${PROJECT_NAME}_UPPER}_CUTE_REPORTS_DIRECTORY}"
       COMMAND ${TEST_TARGET_NAME}

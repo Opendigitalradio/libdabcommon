@@ -44,6 +44,7 @@ PROJECT_FLAGS = [
     '-Wextra',
     '-Werror',
     '-pedantic-errors',
+    '-DCUTE_TESTING',
 ]
 
 # Project local include paths
