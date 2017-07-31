@@ -1,7 +1,8 @@
-#ifndef DABCOMMON_CUTE_EXTENSIONS__DESCRIPTIVE_TEST_CLASS
-#define DABCOMMON_CUTE_EXTENSIONS__DESCRIPTIVE_TEST_CLASS
+#ifndef DABCOMMON_CUTE_EXTENSIONS__SELF_DESCRIPTIVE_SUITE
+#define DABCOMMON_CUTE_EXTENSIONS__SELF_DESCRIPTIVE_SUITE
 
 #include <cute/cute_suite.h>
+#include <cute/cute_demangle.h>
 
 #include <algorithm>
 #include <cctype>
@@ -16,27 +17,6 @@ namespace cute
 
   namespace extensions
     {
-
-    namespace impl
-      {
-
-      bool demangle(std::type_info const & type, std::string & name)
-        {
-        int status{};
-        auto demangled = std::unique_ptr<char, void (*)(void *)>{
-          abi::__cxa_demangle(type.name(), nullptr, nullptr, &status),
-          std::free};
-
-        if(status)
-          {
-          return false;
-          }
-
-        name = demangled.get();
-        return true;
-        }
-
-      }
 
     /**
      * @brief A self-descriptive suite class for CUTE
@@ -57,13 +37,17 @@ namespace cute
     template<typename TestClass>
     struct self_descriptive_suite
       {
+
+      /**
+       * @brief Get the description of the suite described by this class
+       *
+       * @note   Might be customized by the user
+       * @since  1.0.1
+       * @author Felix Morgner
+       */
       static std::string description()
         {
-        auto name = std::string{};
-        if(!impl::demangle(typeid(TestClass), name))
-          {
-          return typeid(TestClass).name();
-          }
+        auto name = cute::demangle(typeid(TestClass).name());
 
         auto lastColon = name.find_last_of(':') + 1;
         if(lastColon != name.npos)
@@ -90,6 +74,13 @@ namespace cute
         return name;
         }
 
+      /**
+       * @brief Get the suite of tests of this class
+       *
+       * @note   **MUST** be provided by the user
+       * @since  1.0.1
+       * @author Felix Morgner
+       */
       static cute::suite suite()
         {
         static_assert(sizeof(TestClass) < 0, "Missing implementation of 'suite()' for your test class!");
@@ -97,22 +88,25 @@ namespace cute
         }
       };
 
+    /**
+     * @brief Run a #cute::extensions::self_descriptive_suite using the provided runner
+     *
+     * @since  1.0.1
+     * @author Felix Morgner
+     */
+    template<typename SelfDescriptiveSuite, typename Runner>
+    bool runSelfDescriptive(Runner & runner)
+      {
+      return runner(SelfDescriptiveSuite::suite(), SelfDescriptiveSuite::description().c_str());
+      }
     }
 
   }
 
 /**
- * @brief Run the given #cute::extensions::self_descriptive_suite using the provided runner
- *
- * @since 1.0.1
- * @author Felix Morgner
- */
-#define CUTE_DESCRIPTIVE_RUN(DescriptiveSuite,Runner) Runner(DescriptiveSuite::suite(), DescriptiveSuite::description().c_str())
-
-/**
  * @brief Create a new 'self-descriptive' suite as a C++ @p struct
  *
- * @since 1.0.1
+ * @since  1.0.1
  * @author Felix Morgner
  */
 #define CUTE_DESCRIPTIVE_STRUCT(ClassName) struct ClassName : cute::extensions::self_descriptive_suite<ClassName>
@@ -120,7 +114,7 @@ namespace cute
 /**
  * @brief Create a new 'self-descriptive' suite as a C++ @p class
  *
- * @since 1.0.1
+ * @since  1.0.1
  * @author Felix Morgner
  */
 #define CUTE_DESCRIPTIVE_CLASS(ClassName) class ClassName : public cute::extensions::self_descriptive_suite<ClassName>

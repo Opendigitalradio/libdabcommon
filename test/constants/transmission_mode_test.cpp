@@ -23,10 +23,10 @@ int main(int argc, char * * argv)
 
   using namespace dab::test::constants::transmission_mode;
 
-  success &= CUTE_DESCRIPTIVE_RUN(mode_1_tests, runner);
-  success &= CUTE_DESCRIPTIVE_RUN(mode_2_tests, runner);
-  success &= CUTE_DESCRIPTIVE_RUN(mode_3_tests, runner);
-  success &= CUTE_DESCRIPTIVE_RUN(mode_4_tests, runner);
+  success &= cute::extensions::runSelfDescriptive<mode_1_tests>(runner);
+  success &= cute::extensions::runSelfDescriptive<mode_2_tests>(runner);
+  success &= cute::extensions::runSelfDescriptive<mode_3_tests>(runner);
+  success &= cute::extensions::runSelfDescriptive<mode_4_tests>(runner);
 
   return !success;
   }

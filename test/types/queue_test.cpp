@@ -21,8 +21,8 @@ int main(int argc, char * * argv)
 
   using namespace dab::test::type::queue;
 
-  success &= CUTE_DESCRIPTIVE_RUN(enqueueing_tests, runner);
-  success &= CUTE_DESCRIPTIVE_RUN(dequeueing_tests, runner);
+  success &= cute::extensions::runSelfDescriptive<enqueueing_tests>(runner);
+  success &= cute::extensions::runSelfDescriptive<dequeueing_tests>(runner);
 
   return !success;
   }
