@@ -5,7 +5,7 @@
 
 #include <cute/cute.h>
 #include <cute/cute_suite.h>
-#include <cute/extensions/descriptive_suite.h>
+#include <cutex/descriptive_suite.h>
 
 #include <algorithm>
 #include <chrono>

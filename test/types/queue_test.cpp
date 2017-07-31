@@ -5,7 +5,7 @@
 #include <cute/cute_suite.h>
 #include <cute/xml_listener.h>
 #include <cute/ide_listener.h>
-#include <cute/extensions/descriptive_suite.h>
+#include <cutex/descriptive_suite.h>
 
 #include <vector>
 

@@ -1,5 +1,5 @@
 [requires]
-CUTE/[>=2.0]@fmorgner/stable
+CUTEX/[>=1.0]@fmorgner/stable
 
 [generators]
 cmake
