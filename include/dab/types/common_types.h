@@ -1,8 +1,8 @@
 #ifndef DABCOMMON__TYPES__COMMON_TYPES
 #define DABCOMMON__TYPES__COMMON_TYPES
 
-#include "types/parse_status.h"
-#include "types/queue.h"
+#include "dab/types/parse_status.h"
+#include "dab/types/queue.h"
 
 #include <complex>
 #include <cstdint>

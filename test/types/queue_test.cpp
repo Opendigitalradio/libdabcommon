@@ -11,8 +11,6 @@
 
 int main(int argc, char * * argv)
   {
-  auto testSuite = cute::suite{};
-
   auto xmlFile = cute::xml_file_opener{argc, argv};
   auto listener = cute::xml_listener<cute::ide_listener<>>{xmlFile.out};
 

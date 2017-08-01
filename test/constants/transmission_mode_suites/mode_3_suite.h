@@ -1,7 +1,7 @@
 #ifndef DABCOMMON_TEST_CONSTANTS_TRANSMISSION_MODE__MODE_3_TESTS
 #define DABCOMMON_TEST_CONSTANTS_TRANSMISSION_MODE__MODE_3_TESTS
 
-#include <constants/transmission_modes.h>
+#include <dab/constants/transmission_modes.h>
 
 #include <cute/cute.h>
 #include <cute/cute_suite.h>

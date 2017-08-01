@@ -1,7 +1,7 @@
 #ifndef DABCOMMON_TEST_TYPES_QUEUE__ENQUEUEING_SUITE
 #define DABCOMMON_TEST_TYPES_QUEUE__ENQUEUEING_SUITE
 
-#include <types/queue.h>
+#include <dab/types/queue.h>
 
 #include <cute/cute.h>
 #include <cute/cute_suite.h>
