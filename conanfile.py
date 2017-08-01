@@ -4,13 +4,13 @@ from conans import ConanFile, CMake
 
 class LibdabcommonConan(ConanFile):
     name = 'libdabcommon'
+    description = """The common subsystem for the ODR DAB data toolkit"""
     license = 'BSD 3-clause'
     version = '1.0.1'
-    url = 'https://github.com/Opendigitalradio/libdabcommon.git'
+    url = 'https://github.com/fmorgner/libdabcommon.git'
     settings = None
-    generators = ['cmake', 'txt']
     options = {"test": [True, False]}
-    default_options = "test=True"
+    default_options = "test=False"
 
     def build(self):
         if self.options.test:
@@ -22,7 +22,6 @@ class LibdabcommonConan(ConanFile):
         self.copy('*.h', dst='include', src='libdabcommon/include')
 
     def package_info(self):
-        self.cpp_info.includedirs = ['include']
         self.cpp_info.libs = ['pthread']
 
     def requirements(self):
