@@ -9,6 +9,8 @@ set(CXX_VERSION "c++11")
 include("CompilerSetup")
 include("ConanPackages")
 
+install_conan_packages(SYSTEM_HEADERS)
+
 find_package(Threads REQUIRED)
 
 string(TOUPPER ${PROJECT_NAME} ${PROJECT_NAME}_UPPER)
