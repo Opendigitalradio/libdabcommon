@@ -7,7 +7,7 @@ class LibdabcommonConan(ConanFile):
     description = """The common subsystem for the ODR DAB data toolkit"""
     license = 'BSD 3-clause'
     version = '1.0.1'
-    url = 'https://github.com/fmorgner/libdabcommon.git'
+    url = 'https://github.com/Opendigitalradio/libdabcommon.git'
     settings = None
     options = {"test": [True, False]}
     default_options = "test=False"
