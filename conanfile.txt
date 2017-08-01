@@ -1,6 +1,0 @@
-[requires]
-CUTEX/[>=1.0]@fmorgner/stable
-
-[generators]
-cmake
-txt
