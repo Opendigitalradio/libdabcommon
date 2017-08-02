@@ -26,12 +26,12 @@ namespace dab
     /**
      * The default block size used by the queue
      */
-    std::size_t constexpr kQueueDefaultBlockSize{512};
+    std::size_t constexpr kQueueDefaultBlockSize{1 << 16};
 
     /**
      * The default number of blocks in a block group
      */
-    std::size_t constexpr kQueueDefaultGroupSize{1024};
+    std::size_t constexpr kQueueDefaultGroupSize{16};
 
     /**
      * @internal
@@ -242,7 +242,7 @@ namespace dab
           std::size_t blockIndex{};
           std::tie(blockNumber, blockIndex) = enqueueing_point();
 
-          auto target = m_backingStore.data() + blockNumber + blockIndex;
+          auto target = reinterpret_cast<ValueType *>(m_backingStore.data()) + blockNumber * BlockSize + blockIndex;
           std::memcpy(target, block.data(), required * sizeof(ValueType));
           m_size += required;
           m_hasElements.notify_one();
@@ -264,6 +264,12 @@ namespace dab
 
           target = std::move(m_backingStore[blockNumber][blockIndex]);
           --m_size;
+
+          if(++m_current > AllocationSize / 2)
+            {
+            std::memmove(m_backingStore.data(), m_backingStore.data() + m_current, m_size * sizeof(ValueType));
+            m_current = 0;
+            }
           }
 
         /**
@@ -278,7 +284,7 @@ namespace dab
           {
           std::size_t blockNumber{};
           std::size_t blockIndex{};
-          std::tie(blockNumber, blockIndex) = dequeueing_point(block.size());
+          std::tie(blockNumber, blockIndex) = dequeueing_point();
 
           for(std::size_t idx = 0; idx < block.size(); ++idx)
             {
@@ -287,6 +293,12 @@ namespace dab
             }
 
           m_size -= block.size();
+          if((m_current += block.size()) > AllocationSize / 2)
+            {
+            auto base = reinterpret_cast<ValueType *>(m_backingStore.data());
+            std::memmove(base, base + m_current, m_size * sizeof(ValueType));
+            m_current = 0;
+            }
           }
 
         /**
@@ -309,12 +321,13 @@ namespace dab
          * @param  nofElements The number of elements to be dequeued
          * @return A pair consisting of the 'block number' and the 'index into the block' of the first element to be dequeued
          */
-        std::pair<std::size_t, std::size_t> dequeueing_point(std::size_t const nofElements = 1) const
+        std::pair<std::size_t, std::size_t> dequeueing_point() const
           {
-          return std::make_pair((m_size - nofElements) / BlockSize, (m_size - nofElements) % BlockSize);
+          return std::make_pair(m_current / BlockSize, m_current % BlockSize);
           }
 
         std::atomic_size_t m_size{};
+        std::atomic_size_t m_current{};
         std::vector<block_type> m_backingStore{};
         std::mutex mutable m_mutex{};
         std::condition_variable m_hasElements{};

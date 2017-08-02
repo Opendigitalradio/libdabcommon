@@ -50,9 +50,9 @@ namespace dab
 
 #define LOCAL_TEST(Test) CUTE_SMEMFUN(dequeueing_tests, Test)
             suite += LOCAL_TEST(size_is_one_less_after_dequeueing_an_element);
-            suite += LOCAL_TEST(dequeueing_an_element_returns_the_last_enqueued);
+            suite += LOCAL_TEST(dequeueing_an_element_returns_the_first_enqueued);
             suite += LOCAL_TEST(size_is_block_size_less_after_dequeueing_a_block);
-            suite += LOCAL_TEST(dequeueing_a_block_returns_the_last_block_size_elements_enqueued);
+            suite += LOCAL_TEST(dequeueing_a_block_returns_the_first_block_size_elements_enqueued);
             suite += LOCAL_TEST(dequeueing_an_element_on_an_empty_queue_blocks);
             suite += LOCAL_TEST(dequeueing_a_block_on_an_empty_queue_blocks);
             suite += LOCAL_TEST(dequeueing_an_empty_block_on_an_empty_queue_does_not_block);
@@ -84,12 +84,12 @@ namespace dab
             ASSERT_EQUAL(before - 1, m_queue.size());
             }
 
-          void dequeueing_an_element_returns_the_last_enqueued()
+          void dequeueing_an_element_returns_the_first_enqueued()
             {
             int target{};
             m_queue.dequeue(target);
 
-            ASSERT_EQUAL(internal::kInitialData.back(), target);
+            ASSERT_EQUAL(internal::kInitialData.front(), target);
             }
 
           void size_is_block_size_less_after_dequeueing_a_block()
@@ -102,12 +102,12 @@ namespace dab
             ASSERT_EQUAL(before - block.size(), m_queue.size());
             }
 
-          void dequeueing_a_block_returns_the_last_block_size_elements_enqueued()
+          void dequeueing_a_block_returns_the_first_block_size_elements_enqueued()
             {
             std::vector<int> block(3);
             m_queue.dequeue(block);
 
-            ASSERT(equal(block.crbegin(), block.crend(), internal::kInitialData.crbegin()));
+            ASSERT(equal(block.begin(), block.end(), internal::kInitialData.begin()));
             }
 
           void dequeueing_an_element_on_an_empty_queue_blocks()
