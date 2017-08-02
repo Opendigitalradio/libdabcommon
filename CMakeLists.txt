@@ -3,16 +3,6 @@ project("DABCommon"
   LANGUAGES CXX
   VERSION 1.0.1)
 
-list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules")
-set(CXX_VERSION "c++11")
-
-include("CompilerSetup")
-include("ConanPackages")
-
-install_conan_packages(SYSTEM_HEADERS)
-
-find_package(Threads REQUIRED)
-
 string(TOUPPER ${PROJECT_NAME} ${PROJECT_NAME}_UPPER)
 string(TOLOWER ${PROJECT_NAME} ${PROJECT_NAME}_LOWER)
 
@@ -20,6 +10,22 @@ option(${${PROJECT_NAME}_UPPER}_ENABLE_TESTS
   "Build and run the ${PROJECT_NAME} unit tests."
   OFF
 )
+
+if(${${${PROJECT_NAME}_UPPER}_ENABLE_TESTS})
+  set(CONAN_OPTIONS libdabcommon:test=True)
+endif()
+
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules")
+set(CXX_VERSION "c++11")
+
+include("CompilerSetup")
+include("ConanPackages")
+
+install_conan_packages(SYSTEM_HEADERS
+  PKGOPTS ${CONAN_OPTIONS}
+  )
+
+find_package(Threads REQUIRED)
 
 add_subdirectory("include")
 
