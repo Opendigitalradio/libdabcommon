@@ -97,12 +97,9 @@ namespace dab
           void contents_is_default_initialized()
             {
             int constexpr dummy{};
-            for(auto && block : m_queue.m_backingStore)
+            for(auto && element : m_queue.m_backingStore)
               {
-              for(auto && element : block)
-                {
-                ASSERT_EQUAL(dummy, element);
-                }
+              ASSERT_EQUAL(dummy, element);
               }
             }
 

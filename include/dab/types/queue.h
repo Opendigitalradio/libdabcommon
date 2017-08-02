@@ -26,12 +26,12 @@ namespace dab
     /**
      * The default block size used by the queue
      */
-    std::size_t constexpr kQueueDefaultBlockSize{1 << 16};
+    std::size_t constexpr kQueueDefaultBlockSize{8192};
 
     /**
      * The default number of blocks in a block group
      */
-    std::size_t constexpr kQueueDefaultGroupSize{16};
+    std::size_t constexpr kQueueDefaultGroupSize{512};
 
     /**
      * @internal
@@ -50,14 +50,16 @@ namespace dab
     template<typename ValueType, std::size_t BlockSize = kQueueDefaultBlockSize, std::size_t GroupSize = kQueueDefaultGroupSize>
     struct queue
       {
-      using block_type = std::array<ValueType, BlockSize>;
+      static auto constexpr block_size = BlockSize;
+      static auto constexpr group_size = GroupSize;
+      static auto constexpr alloc_size = block_size * group_size;
 
       /**
        * @brief Construct an empty queue
        *
        * @param nofInitialGroups The number of block groups to preallocate during construction
        */
-      explicit queue(std::size_t const nofInitialGroups = 1) : m_backingStore{GroupSize * nofInitialGroups}
+      explicit queue(std::size_t const nofInitialGroups = 1) : m_backingStore(alloc_size * nofInitialGroups)
         {
         }
 
@@ -210,10 +212,10 @@ namespace dab
 
           if(blockNumber >= m_backingStore.size())
             {
-            m_backingStore.resize(m_backingStore.size() + GroupSize);
+            m_backingStore.resize(m_backingStore.size() + alloc_size);
             }
 
-          m_backingStore[blockNumber][blockIndex] = std::forward<ElementType>(element);
+          m_backingStore[blockNumber * block_size + blockIndex] = std::forward<ElementType>(element);
           m_size++;
           m_hasElements.notify_one();
           }
@@ -229,20 +231,20 @@ namespace dab
         template<typename BlockType>
         void do_enqueue_block(BlockType && block)
           {
-          auto const available = m_backingStore.size() * BlockSize - m_size;
+          auto const available = m_backingStore.size();
           auto const required = block.size();
 
           if(required > available)
             {
             auto factor = (required - available) / AllocationSize + 1;
-            m_backingStore.resize(m_backingStore.size() + GroupSize * factor);
+            m_backingStore.resize(m_backingStore.size() + alloc_size * factor);
             }
 
           std::size_t blockNumber{};
           std::size_t blockIndex{};
           std::tie(blockNumber, blockIndex) = enqueueing_point();
 
-          auto target = reinterpret_cast<ValueType *>(m_backingStore.data()) + blockNumber * BlockSize + blockIndex;
+          auto target = m_backingStore.data() + blockNumber * block_size + blockIndex;
           std::memcpy(target, block.data(), required * sizeof(ValueType));
           m_size += required;
           m_hasElements.notify_one();
@@ -262,7 +264,7 @@ namespace dab
           std::size_t blockIndex{};
           std::tie(blockNumber, blockIndex) = dequeueing_point();
 
-          target = std::move(m_backingStore[blockNumber][blockIndex]);
+          target = std::move(m_backingStore[blockNumber * block_size + blockIndex]);
           --m_size;
 
           if(++m_current > AllocationSize / 2)
@@ -288,14 +290,14 @@ namespace dab
 
           for(std::size_t idx = 0; idx < block.size(); ++idx)
             {
-            std::ptrdiff_t const offset = (blockNumber * BlockSize) + blockIndex + idx;
-            block[idx] = std::move(*reinterpret_cast<ValueType * const>(m_backingStore.data()) + offset);
+            std::ptrdiff_t const offset = blockNumber * block_size + blockIndex + idx;
+            block[idx] = std::move(*(m_backingStore.data() + offset));
             }
 
           m_size -= block.size();
-          if((m_current += block.size()) > AllocationSize / 2)
+          if((m_current += block.size()) > m_backingStore.size() / 2)
             {
-            auto base = reinterpret_cast<ValueType *>(m_backingStore.data());
+            auto base = m_backingStore.data();
             std::memmove(base, base + m_current, m_size * sizeof(ValueType));
             m_current = 0;
             }
@@ -328,7 +330,7 @@ namespace dab
 
         std::atomic_size_t m_size{};
         std::atomic_size_t m_current{};
-        std::vector<block_type> m_backingStore{};
+        std::vector<ValueType> m_backingStore{};
         std::mutex mutable m_mutex{};
         std::condition_variable m_hasElements{};
       };
