@@ -206,16 +206,12 @@ namespace dab
         template<typename ElementType>
         void do_enqueue(ElementType && element)
           {
-          std::size_t blockNumber{};
-          std::size_t blockIndex{};
-          std::tie(blockNumber, blockIndex) = enqueueing_point();
-
-          if(blockNumber >= m_backingStore.size())
+          if(m_size >= m_backingStore.size())
             {
             m_backingStore.resize(m_backingStore.size() + alloc_size);
             }
 
-          m_backingStore[blockNumber * block_size + blockIndex] = std::forward<ElementType>(element);
+          m_backingStore[m_current + m_size] = std::forward<ElementType>(element);
           m_size++;
           m_hasElements.notify_one();
           }
@@ -231,20 +227,16 @@ namespace dab
         template<typename BlockType>
         void do_enqueue_block(BlockType && block)
           {
-          auto const available = m_backingStore.size();
+          auto const available = m_backingStore.size() - m_size;
           auto const required = block.size();
 
           if(required > available)
             {
-            auto factor = (required - available) / AllocationSize + 1;
+            auto factor = (required - available) / alloc_size + 1;
             m_backingStore.resize(m_backingStore.size() + alloc_size * factor);
             }
 
-          std::size_t blockNumber{};
-          std::size_t blockIndex{};
-          std::tie(blockNumber, blockIndex) = enqueueing_point();
-
-          auto target = m_backingStore.data() + blockNumber * block_size + blockIndex;
+          auto target = m_backingStore.data() + m_current + m_size;
           std::memcpy(target, block.data(), required * sizeof(ValueType));
           m_size += required;
           m_hasElements.notify_one();
@@ -260,16 +252,14 @@ namespace dab
          */
         void do_dequeue(ValueType & target)
           {
-          std::size_t blockNumber{};
-          std::size_t blockIndex{};
-          std::tie(blockNumber, blockIndex) = dequeueing_point();
-
-          target = std::move(m_backingStore[blockNumber * block_size + blockIndex]);
+          target = std::move(m_backingStore[m_current]);
           --m_size;
+          ++m_current;
 
-          if(++m_current > AllocationSize / 2)
+          if(m_current > m_backingStore.size() / 2)
             {
-            std::memmove(m_backingStore.data(), m_backingStore.data() + m_current, m_size * sizeof(ValueType));
+            auto base = m_backingStore.data();
+            std::memmove(base, base + m_current, m_size * sizeof(ValueType));
             m_current = 0;
             }
           }
@@ -284,48 +274,16 @@ namespace dab
          */
         void do_dequeue_block(std::vector<ValueType> & block)
           {
-          std::size_t blockNumber{};
-          std::size_t blockIndex{};
-          std::tie(blockNumber, blockIndex) = dequeueing_point();
-
-          for(std::size_t idx = 0; idx < block.size(); ++idx)
-            {
-            std::ptrdiff_t const offset = blockNumber * block_size + blockIndex + idx;
-            block[idx] = std::move(*(m_backingStore.data() + offset));
-            }
-
+          std::memcpy(block.data(), m_backingStore.data() + m_current, block.size() * sizeof(ValueType));
           m_size -= block.size();
-          if((m_current += block.size()) > m_backingStore.size() / 2)
+          m_current += block.size();
+
+          if(m_current > m_backingStore.size() / 2)
             {
             auto base = m_backingStore.data();
             std::memmove(base, base + m_current, m_size * sizeof(ValueType));
             m_current = 0;
             }
-          }
-
-        /**
-         * @internal
-         * @brief Calculate the position of the first empty slot in the queue
-         *
-         * @return A pair consisting of the 'block number' and the 'index into the block' of the first empty slot
-         */
-        std::pair<std::size_t, std::size_t> enqueueing_point() const
-          {
-          return std::make_pair(m_size / BlockSize, m_size % BlockSize);
-          }
-
-        /**
-         * @internal
-         * @brief Calculate the position of the first element to be dequeued
-         *
-         * @pre nofElement <= size()
-         *
-         * @param  nofElements The number of elements to be dequeued
-         * @return A pair consisting of the 'block number' and the 'index into the block' of the first element to be dequeued
-         */
-        std::pair<std::size_t, std::size_t> dequeueing_point() const
-          {
-          return std::make_pair(m_current / BlockSize, m_current % BlockSize);
           }
 
         std::atomic_size_t m_size{};
