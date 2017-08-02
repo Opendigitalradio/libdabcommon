@@ -3,7 +3,8 @@ include(CMakeParseArguments)
 function(install_conan_packages)
   set(OPTIONS SYSTEM_HEADERS)
   set(SV_ARGUMENTS LIBCXX CONANFILE)
-  cmake_parse_arguments(INSTALL_CONAN "${OPTIONS}" "${SV_ARGUMENTS}" "" ${ARGN})
+  set(MV_ARGUMENTS PKGOPTS)
+  cmake_parse_arguments(INSTALL_CONAN "${OPTIONS}" "${SV_ARGUMENTS}" "${MV_ARGUMENTS}" ${ARGN})
 
   if(${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
     set(_COMPILER "gcc")
@@ -46,24 +47,29 @@ function(install_conan_packages)
     endif()
   endif()
 
+  if(DEFINED INSTALL_CONAN_PKGOPTS)
+    foreach(OPT ${INSTALL_CONAN_PKGOPTS})
+      set(_OPTIONS ${_OPTIONS} -o ${OPT})
+    endforeach()
+  endif()
+
   message(STATUS "Conan: current conanfile: ${_CONANFILE}")
 
-  if(NOT EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
-    message(STATUS "Conan: installing packages")
-    get_filename_component(_CONANFILE "${_CONANFILE}" DIRECTORY)
-    execute_process(COMMAND conan
-      install
-      --build=missing
-      --generator=cmake
-      -s compiler=${_COMPILER}
-      -s compiler.version=${_COMPILER_VERSION}
-      -s compiler.libcxx=${_LIBCXX}
-      ${_CONANFILE}
-      OUTPUT_FILE "${CMAKE_BINARY_DIR}/${PROJECT_NAME}_conan_install.log"
-      RESULT_VARIABLE _RESULT)
-    if(${_RESULT})
-      message(FATAL_ERROR "Conan: failed to install packages. Check ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_conan_install.log")
-    endif()
+  message(STATUS "Conan: installing packages")
+  get_filename_component(_CONANFILE "${_CONANFILE}" DIRECTORY)
+  execute_process(COMMAND conan
+    install
+    --build=missing
+    --generator=cmake
+    -s compiler=${_COMPILER}
+    -s compiler.version=${_COMPILER_VERSION}
+    -s compiler.libcxx=${_LIBCXX}
+    ${_OPTIONS}
+    ${_CONANFILE}
+    OUTPUT_FILE "${CMAKE_BINARY_DIR}/${PROJECT_NAME}_conan_install.log"
+    RESULT_VARIABLE _RESULT)
+  if(${_RESULT})
+    message(FATAL_ERROR "Conan: failed to install packages. Check ${CMAKE_BINARY_DIR}/${PROJECT_NAME}_conan_install.log")
   endif()
 
   include("${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
