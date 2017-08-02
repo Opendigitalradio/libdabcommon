@@ -1,6 +1,11 @@
 include(CMakeParseArguments)
 
 function(install_conan_packages)
+  get_directory_property(HAS_PARENT PARENT_DIRECTORY)
+  if(HAS_PARENT)
+    return()
+  endif()
+
   set(OPTIONS SYSTEM_HEADERS)
   set(SV_ARGUMENTS LIBCXX CONANFILE)
   set(MV_ARGUMENTS PKGOPTS)
