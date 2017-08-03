@@ -9,7 +9,12 @@ string(TOLOWER ${PROJECT_NAME} ${PROJECT_NAME}_LOWER)
 option(${${PROJECT_NAME}_UPPER}_ENABLE_TESTS
   "Build and run the ${PROJECT_NAME} unit tests."
   OFF
-)
+  )
+
+option(${${PROJECT_NAME}_UPPER}_SKIP_CONAN
+  "Skip installing the dependencies for ${PROJECT_NAME} through conan."
+  OFF
+  )
 
 if(${${${PROJECT_NAME}_UPPER}_ENABLE_TESTS})
   set(CONAN_OPTIONS libdabcommon:test=True)
@@ -19,11 +24,13 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules")
 set(CXX_VERSION "c++11")
 
 include("CompilerSetup")
-include("ConanPackages")
 
-install_conan_packages(SYSTEM_HEADERS
-  PKGOPTS ${CONAN_OPTIONS}
-  )
+if(NOT ${${PROJECT_NAME}_UPPER}_SKIP_CONAN)
+  include("ConanPackages")
+  install_conan_packages(SYSTEM_HEADERS
+    PKGOPTS ${CONAN_OPTIONS}
+    )
+endif()
 
 find_package(Threads REQUIRED)
 
@@ -31,5 +38,11 @@ add_subdirectory("include")
 
 if(${${PROJECT_NAME}_UPPER}_ENABLE_TESTS AND NOT BUILD_DOCUMENTATION_ONLY)
   include("CUTE")
-  add_subdirectory(test)
+  add_subdirectory("test")
 endif()
+
+install(EXPORT ${PROJECT_NAME}
+  DESTINATION "share/${${PROJECT_NAME}_LOWER}/cmake"
+  )
+
+export(EXPORT ${PROJECT_NAME})
