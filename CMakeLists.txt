@@ -17,7 +17,11 @@ option(${${PROJECT_NAME}_UPPER}_SKIP_CONAN
   )
 
 if(${${${PROJECT_NAME}_UPPER}_ENABLE_TESTS})
-  set(CONAN_OPTIONS libdabcommon:test=True)
+  set(CONAN_OPTIONS ${CONAN_OPTIONS} libdabcommon:test=True)
+  get_directory_property(${PROJECT_NAME}_HAS_PARENT PARENT_DIRECTORY)
+  if(${PROJECT_NAME}_HAS_PARENT)
+    set(CONAN_OPTIONS ${CONAN_OPTIONS} PARENT_SCOPE)
+  endif()
 endif()
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules")
