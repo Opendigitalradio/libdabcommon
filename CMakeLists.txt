@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.1.2)
 project("DABCommon"
   LANGUAGES CXX
   VERSION 1.0.1)
@@ -42,6 +42,10 @@ add_subdirectory("include")
 
 if(${${PROJECT_NAME}_UPPER}_ENABLE_TESTS AND NOT BUILD_DOCUMENTATION_ONLY)
   include("CUTE")
+  include_directories(SYSTEM
+    $<TARGET_PROPERTY:CONAN_PKG::CUTE,INTERFACE_INCLUDE_DIRECTORIES>
+    $<TARGET_PROPERTY:CONAN_PKG::CUTEX,INTERFACE_INCLUDE_DIRECTORIES>
+    )
   add_subdirectory("test")
 endif()
 
