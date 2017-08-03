@@ -9,53 +9,52 @@
 #include <utility>
 #include <vector>
 
-/**
- * @author Felix Morgner
- *
- * @brief This namespace captures anything DAB related
- */
 namespace dab
   {
 
   /**
-   * @author Felix Morgner
-   *
    * @brief A convenience alias that represents a complex sample.
    *
    * It might be worth noting that std::complex was designed to be bit compatible
    * with the C99 complex type and can thus be used in conjunction with fftw.
+   *
+   * @author Felix Morgner
+   * @since  1.0.1
    */
   using sample_t = std::complex<float>;
 
   /**
+   * @brief A convenience alias that represents a vector of bytes
+   *
    * @author Tobias Stauber
-   *
-   * @brief A type that resembles a vector of bytes.
-   *
+   * @since  1.0.0
    **/
   using byte_vector_t = std::vector<std::uint8_t>;
 
   /**
-   * @author Tobias Stauber
-   *
    * @brief A type used as return value by parsers.
    *
-   * The first argument resembles the return status of the parser.
-   * The second argument resembles the returned byte_vector_t.
+   * The first argument contains the return status of the parser.
+   * The second argument contains the returned byte_vector_t.
+   *
+   * @author Tobias Stauber
+   * @since  1.0.0
    **/
   using pair_status_vector_t = std::pair<dab::parse_status, byte_vector_t>;
 
   /**
-   * @author Felix Morgner
-   *
    * @brief The type of a queue for transporting samples
+   *
+   * @author Felix Morgner
+   * @since  1.0.0
    */
   using sample_queue_t = internal::queue<sample_t>;
 
   /**
-   * @author Felix Morgner
-   *
    * @brief The type of a queue for transporting symbols
+   *
+   * @author Felix Morgner
+   * @since  1.0.0
    */
   using symbol_queue_t = internal::queue<std::vector<float>>;
 
@@ -63,11 +62,12 @@ namespace dab
     {
 
     /**
-     * @author Felix Morgner
-     *
      * @brief A convenience alias that represents a complex sample
      *
-     * @deprecated @see dab::sample_t
+     * @author Felix Morgner
+     * @since  1.0.0
+     *
+     * @deprecated Deprecated since 1.0.1, see dab::sample_t
      */
     using sample_t = dab::sample_t;
 

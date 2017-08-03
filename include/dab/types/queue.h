@@ -25,11 +25,17 @@ namespace dab
 
     /**
      * The default block size used by the queue
+     *
+     * @author Felix Morgner
+     * @since  1.0.1
      */
     std::size_t constexpr kQueueDefaultBlockSize{8192};
 
     /**
      * The default number of blocks in a block group
+     *
+     * @author Felix Morgner
+     * @since  1.0.1
      */
     std::size_t constexpr kQueueDefaultGroupSize{512};
 
@@ -44,8 +50,8 @@ namespace dab
      * @tparam BlockSize The size of the blocks allocated by the queue
      * @tparam GroupSize The size of the block allocation steps
      *
-     * @since 1.0.1
      * @author Felix Morgner
+     * @since  1.0.1
      */
     template<typename ValueType, std::size_t BlockSize = kQueueDefaultBlockSize, std::size_t GroupSize = kQueueDefaultGroupSize>
     struct queue
@@ -58,6 +64,9 @@ namespace dab
        * @brief Construct an empty queue
        *
        * @param nofInitialGroups The number of block groups to preallocate during construction
+       *
+       * @author Felix Morgner
+       * @since  1.0.1
        */
       explicit queue(std::size_t const nofInitialGroups = 1) : m_backingStore(alloc_size * nofInitialGroups)
         {
@@ -65,6 +74,9 @@ namespace dab
 
       /**
        * @brief Get the current number of elements in the queue
+       *
+       * @author Felix Morgner
+       * @since  1.0.1
        */
       std::size_t size() const
         {
@@ -74,6 +86,9 @@ namespace dab
 
       /**
        * @brief Get the approximate number of elements in the queue
+       *
+       * @author Felix Morgner
+       * @since  1.0.1
        */
       std::size_t approximate_size() const
         {
@@ -84,6 +99,9 @@ namespace dab
        * @brief Enqueue a single element into the queue
        *
        * @note This call blocks until the element can be enqueued.
+       *
+       * @author Felix Morgner
+       * @since  1.0.1
        */
       void enqueue(ValueType const & elem)
         {
@@ -95,6 +113,9 @@ namespace dab
        * @brief Enqueue a single element into the queue
        *
        * @note This call blocks until the element can be enqueued.
+       *
+       * @author Felix Morgner
+       * @since  1.0.1
        */
       void enqueue(ValueType && elem)
         {
@@ -106,6 +127,9 @@ namespace dab
        * @brief Enqueue an arbitrarily sized block of elements into the queue
        *
        * @note This call blocks until the block can be enqueued.
+       *
+       * @author Felix Morgner
+       * @since  1.0.1
        */
       void enqueue(std::vector<ValueType> const & block)
         {
@@ -117,6 +141,9 @@ namespace dab
        * @brief Enqueue an arbitrarily sized block of elements into the queue
        *
        * @note This call blocks until the block can be enqueued.
+       *
+       * @author Felix Morgner
+       * @since  1.0.1
        */
       void enqueue(std::vector<ValueType> && block)
         {
@@ -128,6 +155,9 @@ namespace dab
        * @brief Dequeue a single element from the queue
        *
        * @note This call blocks until the element can be dequeued
+       *
+       * @author Felix Morgner
+       * @since  1.0.1
        */
       void dequeue(ValueType & target)
         {
@@ -141,6 +171,9 @@ namespace dab
        * @brief Dequeue a block of elements from the queue
        *
        * @note This call blocks until the block can be dequeued
+       *
+       * @author Felix Morgner
+       * @since  1.0.1
        */
       void dequeue(std::vector<ValueType> & block)
         {
@@ -155,6 +188,9 @@ namespace dab
        * @brief Try to dequeue an element from the queue
        *
        * @note This call never blocks
+       *
+       * @author Felix Morgner
+       * @since  1.0.1
        */
       bool try_dequeue(ValueType & target)
         {
@@ -173,6 +209,9 @@ namespace dab
        * @brief Try to dequeue a block of elements from the queue
        *
        * @note Tis call never blocks
+       *
+       * @author Felix Morgner
+       * @since  1.0.1
        */
       bool try_dequeue(std::vector<ValueType> & block)
         {
@@ -202,6 +241,9 @@ namespace dab
          * @pre  size() > 0
          * @post size() == OLD(size()) - 1
          * @note This function does **NOT** lock the queue!
+         *
+         * @author Felix Morgner
+         * @since  1.0.1
          */
         template<typename ElementType>
         void do_enqueue(ElementType && element)
@@ -223,6 +265,9 @@ namespace dab
          * @pre  size() >= block.size()
          * @post size() == OLD(size()) - block.size()
          * @note This function does **NOT** lock the queue!
+         *
+         * @author Felix Morgner
+         * @since  1.0.1
          */
         template<typename BlockType>
         void do_enqueue_block(BlockType && block)
@@ -249,6 +294,9 @@ namespace dab
          * @pre  size() > 0
          * @post size() == OLD(size()) - 1
          * @note This function does **NOT** lock the queue
+         *
+         * @author Felix Morgner
+         * @since  1.0.1
          */
         void do_dequeue(ValueType & target)
           {
@@ -271,6 +319,9 @@ namespace dab
          * @pre  size() >= block.size()
          * @post size() == OLD(size()) - block.size()
          * @note This function does not lock the queue
+         *
+         * @author Felix Morgner
+         * @since  1.0.1
          */
         void do_dequeue_block(std::vector<ValueType> & block)
           {

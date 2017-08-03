@@ -5,8 +5,10 @@
 
 namespace dab
   {
+
   namespace literals
     {
+
     namespace impl
       {
 
@@ -35,16 +37,18 @@ namespace dab
       }
 
     /**
-     * @author Tobias Stauber
-     *
      * @brief An user defined literal for binary numbers
      *
+     * @author Tobias Stauber
+     * @since  1.0.0
      **/
     template<char ...Digits>
       constexpr unsigned long long operator"" _b() {
         return impl::parse_binary<Digits...>::value;
       }
+
     }
+
   }
 
 #endif

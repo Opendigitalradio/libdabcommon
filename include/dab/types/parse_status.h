@@ -7,10 +7,10 @@ namespace dab
   {
 
   /**
-   * @author Tobias Stauber
-   *
    * @brief Status values returned by parsers.
    *
+   * @author Tobias Stauber
+   * @since  1.0.0
    **/
   enum struct parse_status : std::uint8_t
     {
