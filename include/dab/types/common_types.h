@@ -1,5 +1,5 @@
-#ifndef DABCOMMON__TYPES__COMMON_TYPES
-#define DABCOMMON__TYPES__COMMON_TYPES
+#ifndef DABCOMMON_TYPES_COMMON_TYPES
+#define DABCOMMON_TYPES_COMMON_TYPES
 
 #include "dab/types/parse_status.h"
 #include "dab/types/queue.h"
@@ -76,4 +76,3 @@ namespace dab
   }
 
 #endif
-

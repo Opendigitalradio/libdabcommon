@@ -1,5 +1,5 @@
-#ifndef __DAB_TYPES__MODE_DESCRIPTOR
-#define __DAB_TYPES__MODE_DESCRIPTOR
+#ifndef DAB_TYPES_TRANSMISSION_MODE
+#define DAB_TYPES_TRANSMISSION_MODE
 
 #include <cstdint>
 #include <type_traits>
@@ -229,4 +229,3 @@ namespace dab
   }
 
 #endif
-

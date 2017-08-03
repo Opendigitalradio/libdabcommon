@@ -1,5 +1,5 @@
-#ifndef DABCOMMON_CONSTANTS__TRANSMISSION_MODES
-#define DABCOMMON_CONSTANTS__TRANSMISSION_MODES
+#ifndef DABCOMMON_CONSTANTS_TRANSMISSION_MODES
+#define DABCOMMON_CONSTANTS_TRANSMISSION_MODES
 
 #include "dab/types/transmission_mode.h"
 
@@ -45,4 +45,3 @@ namespace dab
   }
 
 #endif
-

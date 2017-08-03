@@ -1,5 +1,5 @@
-#ifndef DABCOMMON_TYPES__QUEUE
-#define DABCOMMON_TYPES__QUEUE
+#ifndef DABCOMMON_TYPES_QUEUE
+#define DABCOMMON_TYPES_QUEUE
 
 #include <array>
 #include <atomic>

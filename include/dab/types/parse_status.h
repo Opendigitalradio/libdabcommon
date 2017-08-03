@@ -1,5 +1,5 @@
-#ifndef DABCOMMON__PARSE_STATUS
-#define DABCOMMON__PARSE_STATUS
+#ifndef DABCOMMON_PARSE_STATUS
+#define DABCOMMON_PARSE_STATUS
 
 #include <cstdint>
 
