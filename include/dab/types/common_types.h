@@ -17,22 +17,15 @@
 namespace dab
   {
 
-  namespace internal
-    {
-
-      /**
-       * @author Felix Morgner
-       *
-       * @internal
-       *
-       * @brief A convenience alias that represents a complex sample.
-       *
-       * It might be worth noting that std::complex was designed to be bit compatible
-       * with the C99 complex type and can thus be used in conjunction with fftw.
-       */
-      using sample_t = std::complex<float>;
-
-    }
+  /**
+   * @author Felix Morgner
+   *
+   * @brief A convenience alias that represents a complex sample.
+   *
+   * It might be worth noting that std::complex was designed to be bit compatible
+   * with the C99 complex type and can thus be used in conjunction with fftw.
+   */
+  using sample_t = std::complex<float>;
 
   /**
    * @author Tobias Stauber
@@ -57,7 +50,7 @@ namespace dab
    *
    * @brief The type of a queue for transporting samples
    */
-  using sample_queue_t = internal::queue<internal::sample_t>;
+  using sample_queue_t = internal::queue<sample_t>;
 
   /**
    * @author Felix Morgner
@@ -65,6 +58,20 @@ namespace dab
    * @brief The type of a queue for transporting symbols
    */
   using symbol_queue_t = internal::queue<std::vector<float>>;
+
+  namespace internal
+    {
+
+    /**
+     * @author Felix Morgner
+     *
+     * @brief A convenience alias that represents a complex sample
+     *
+     * @deprecated @see dab::sample_t
+     */
+    using sample_t = dab::sample_t;
+
+    }
 
   }
 
