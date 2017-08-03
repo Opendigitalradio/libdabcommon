@@ -74,7 +74,7 @@ namespace dab
             }
 
           private:
-            dab::internal::types::transmission_mode const m_mode = dab::transmission_modes::kTransmissionMode4;
+            dab::internal::types::transmission_mode const m_mode = dab::kTransmissionMode4;
           };
 
         }

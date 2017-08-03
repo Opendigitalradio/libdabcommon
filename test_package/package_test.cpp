@@ -2,5 +2,5 @@
 
 int main()
   {
-  auto copy = dab::transmission_modes::kTransmissionMode1;
+  auto copy = dab::kTransmissionMode1;
   }
