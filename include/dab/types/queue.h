@@ -248,7 +248,9 @@ namespace dab
         template<typename ElementType>
         void do_enqueue(ElementType && element)
           {
-          if(m_size >= m_backingStore.size())
+          auto const available = m_backingStore.size() - m_size - m_current;
+
+          if(!available)
             {
             m_backingStore.resize(m_backingStore.size() + alloc_size);
             }
@@ -272,10 +274,10 @@ namespace dab
         template<typename BlockType>
         void do_enqueue_block(BlockType && block)
           {
-          auto const available = m_backingStore.size() - m_size;
+          auto const available = m_backingStore.size() - m_size - m_current;
           auto const required = block.size();
 
-          if(required > available)
+          if(required >= available)
             {
             auto factor = (required - available) / alloc_size + 1;
             m_backingStore.resize(m_backingStore.size() + alloc_size * factor);
