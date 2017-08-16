@@ -20,10 +20,12 @@ class LibDABCommonConan(ConanFile):
     url = 'https://github.com/Opendigitalradio/libdabcommon.git'
     license = 'BSD 3-clause'
     exports_sources = (
-        '**/CMakeLists.txt',
-        '**/*.h',
-        '**/*.cpp',
-        '**/*.cmake',
+        'CMakeLists.txt',
+        'LICENSE',
+        'README.md',
+        'cmake/*',
+        'include/*',
+        'test/*',
     )
 
     def build(self):
