@@ -29,12 +29,12 @@ class LibDABCommonConan(ConanFile):
     )
 
     def build(self):
-        dabdecode_test = '-DDABCOMMON_ENABLE_TESTS=%s' % (
+        dabdevice_test = '-DDABCOMMON_ENABLE_TESTS=%s' % (
             'On' if self.options.test
             else 'Off'
         )
 
-        dabdecode_prefix = '-DCMAKE_INSTALL_PREFIX="%s"' % (
+        dabdevice_prefix = '-DCMAKE_INSTALL_PREFIX="%s"' % (
             self.package_folder
         )
 
@@ -42,8 +42,8 @@ class LibDABCommonConan(ConanFile):
                   ' {prefix}'
                   ' {test}').format(**{
                       'directory': self.conanfile_directory,
-                      'prefix': dabdecode_prefix,
-                      'test': dabdecode_test,
+                      'prefix': dabdevice_prefix,
+                      'test': dabdevice_test,
                   }))
 
         self.run('cmake --build . --target install')
