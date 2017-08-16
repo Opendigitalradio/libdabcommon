@@ -35,7 +35,6 @@ namespace dab
             suite += LOCAL_TEST(size_after_enqueue_is_one_larger_than_before_LVR);
             suite += LOCAL_TEST(size_after_enqueue_block_is_block_size_larger_than_before_RVR);
             suite += LOCAL_TEST(size_after_enqueue_block_is_block_size_larger_than_before_LVR);
-            suite += LOCAL_TEST(contents_is_default_initialized);
 #undef LOCAL_TEST
 
             return suite;
@@ -92,15 +91,6 @@ namespace dab
             auto const after = m_queue.size();
 
             ASSERT_EQUAL(before + block.size(), after);
-            }
-
-          void contents_is_default_initialized()
-            {
-            int constexpr dummy{};
-            for(auto && element : m_queue.m_backingStore)
-              {
-              ASSERT_EQUAL(dummy, element);
-              }
             }
 
           private:

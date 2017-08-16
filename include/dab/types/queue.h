@@ -1,12 +1,15 @@
 #ifndef DABCOMMON_TYPES_QUEUE
 #define DABCOMMON_TYPES_QUEUE
 
+#include <algorithm>
 #include <array>
 #include <atomic>
 #include <condition_variable>
 #include <cstddef>
 #include <cstring>
+#include <memory>
 #include <mutex>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
@@ -29,7 +32,8 @@ namespace dab
      * @author Felix Morgner
      * @since  1.0.1
      */
-    std::size_t constexpr kQueueDefaultBlockSize{8192};
+    //std::size_t constexpr kQueueDefaultBlockSize{8192};
+    std::size_t constexpr kQueueDefaultBlockSize{8};
 
     /**
      * The default number of blocks in a block group
@@ -37,7 +41,8 @@ namespace dab
      * @author Felix Morgner
      * @since  1.0.1
      */
-    std::size_t constexpr kQueueDefaultGroupSize{512};
+    //std::size_t constexpr kQueueDefaultGroupSize{512};
+    std::size_t constexpr kQueueDefaultGroupSize{4};
 
     /**
      * @internal
@@ -56,6 +61,12 @@ namespace dab
     template<typename ValueType, std::size_t BlockSize = kQueueDefaultBlockSize, std::size_t GroupSize = kQueueDefaultGroupSize>
     struct queue
       {
+      using value_type = ValueType;
+      using pointer = value_type *;
+      using const_pointer = value_type const *;
+      using reference = value_type &;
+      using const_reference = value_type const &;
+
       static auto constexpr block_size = BlockSize;
       static auto constexpr group_size = GroupSize;
       static auto constexpr alloc_size = block_size * group_size;
@@ -68,8 +79,11 @@ namespace dab
        * @author Felix Morgner
        * @since  1.0.1
        */
-      explicit queue(std::size_t const nofInitialGroups = 1) : m_backingStore(alloc_size * nofInitialGroups)
+      explicit queue(std::size_t const nofInitialGroups = 1)
+        : m_capacity{nofInitialGroups * alloc_size}
+        , m_backingStore{allocate(m_capacity)}
         {
+
         }
 
       /**
@@ -232,7 +246,33 @@ namespace dab
         friend dab::test::type::queue::dequeueing_tests;
 #endif
 
-        static auto constexpr AllocationSize = GroupSize * BlockSize;
+        /**
+         * @internal
+         * @brief The size in chars of the element type of the queue
+         */
+        static auto constexpr element_size = sizeof(value_type);
+
+        /**
+         * @internal
+         * @brief A SFINAE type-wrapper to detect trivially-copyable types
+         */
+        template<typename Type>
+        using detect_trivially_copyable = typename std::enable_if<
+                                            std::is_trivially_copyable<
+                                              Type
+                                            >::value
+                                          >::type;
+
+        /**
+         * @internal
+         * @brief A SFINAE type-wrapper to detect non-trivially-copyable types
+         */
+        template<typename Type>
+        using detect_non_trivially_copyable = typename std::enable_if<
+                                                !std::is_trivially_copyable<
+                                                  Type
+                                                >::value
+                                              >::type;
 
         /**
          * @internal
@@ -248,14 +288,13 @@ namespace dab
         template<typename ElementType>
         void do_enqueue(ElementType && element)
           {
-          auto const available = m_backingStore.size() - m_size - m_current;
-
-          if(!available)
+          if(!available())
             {
-            m_backingStore.resize(m_backingStore.size() + alloc_size);
+            resize(m_capacity + alloc_size);
             }
 
-          m_backingStore[m_current + m_size] = std::forward<ElementType>(element);
+          new (enqueue_pointer()) value_type{std::forward<ElementType>(element)};
+
           m_size++;
           m_hasElements.notify_one();
           }
@@ -268,25 +307,53 @@ namespace dab
          * @post size() == OLD(size()) - block.size()
          * @note This function does **NOT** lock the queue!
          *
-         * @author Felix Morgner
          * @since  1.0.1
          */
         template<typename BlockType>
         void do_enqueue_block(BlockType && block)
           {
-          auto const available = m_backingStore.size() - m_size - m_current;
-          auto const required = block.size();
+          auto const blockSize = block.size();
+          auto const availableSlots = available();
 
-          if(required >= available)
+          if(blockSize >= availableSlots)
             {
-            auto factor = (required - available) / alloc_size + 1;
-            m_backingStore.resize(m_backingStore.size() + alloc_size * factor);
+            auto factor = (blockSize - availableSlots) / alloc_size + 1;
+            resize(m_capacity + factor * alloc_size);
             }
 
-          auto target = m_backingStore.data() + m_current + m_size;
-          std::memcpy(target, block.data(), required * sizeof(ValueType));
-          m_size += required;
+          do_enqueue_block_impl<ValueType>(std::forward<BlockType>(block));
+
+          m_size += blockSize;
           m_hasElements.notify_one();
+          }
+
+        /**
+         * @internal
+         * @brief Concrete block enqueueing implementation for trivially-copyable element types
+         *
+         * @since 1.0.1
+         */
+        template<typename DependentType, typename BlockType>
+        detect_trivially_copyable<DependentType> do_enqueue_block_impl(BlockType && block)
+          {
+          auto target = enqueue_pointer();
+          std::memcpy(target, block.data(), block.size() * element_size);
+          }
+
+        /**
+         * @internal
+         * @brief Concrete block enqueueing implementation for non-trivially-copyable element types
+         *
+         * @since 1.0.1
+         */
+        template<typename DependentType, typename BlockType>
+        detect_non_trivially_copyable<DependentType> do_enqueue_block_impl(BlockType && block)
+          {
+          auto target = dequeue_pointer() + m_size;
+          for(auto && entry : block)
+            {
+            new (target++) value_type{std::move(entry)};
+            }
           }
 
         /**
@@ -302,15 +369,15 @@ namespace dab
          */
         void do_dequeue(ValueType & target)
           {
-          target = std::move(m_backingStore[m_current]);
+          target = std::move(*dequeue_pointer());
+          dequeue_pointer()->~value_type();
+
           --m_size;
           ++m_current;
 
-          if(m_current > m_backingStore.size() / 2)
+          if(m_current > m_capacity / 2)
             {
-            auto base = m_backingStore.data();
-            std::memmove(base, base + m_current, m_size * sizeof(ValueType));
-            m_current = 0;
+            shift_down();
             }
           }
 
@@ -325,23 +392,195 @@ namespace dab
          * @author Felix Morgner
          * @since  1.0.1
          */
-        void do_dequeue_block(std::vector<ValueType> & block)
+        template<typename BlockType>
+        void do_dequeue_block(BlockType & block)
           {
-          std::memcpy(block.data(), m_backingStore.data() + m_current, block.size() * sizeof(ValueType));
+          do_dequeue_block_impl<ValueType, BlockType>(block);
+
           m_size -= block.size();
           m_current += block.size();
 
-          if(m_current > m_backingStore.size() / 2)
+          if(m_current > m_capacity / 2)
             {
-            auto base = m_backingStore.data();
-            std::memmove(base, base + m_current, m_size * sizeof(ValueType));
-            m_current = 0;
+            shift_down();
             }
           }
 
-        std::atomic_size_t m_size{};
+        /**
+         * @internal
+         * @brief Block dequeueing implementation for trivially-copyable element types
+         *
+         * @since 1.0.1
+         */
+        template<typename DependentType, typename BlockType>
+        detect_trivially_copyable<DependentType> do_dequeue_block_impl(BlockType & block)
+          {
+          std::memcpy(block.data(), dequeue_pointer(), block.size() * sizeof(ValueType));
+          }
+
+        /**
+         * @internal
+         * @brief Block dequeueing implementation for non-trivially-copyable element types
+         *
+         * @since 1.0.1
+         */
+        template<typename DependentType, typename BlockType>
+        detect_non_trivially_copyable<DependentType> do_dequeue_block_impl(BlockType & block)
+          {
+          auto source = dequeue_pointer();
+          for(auto & entry : block)
+            {
+            entry = std::move(*source);
+            (source++)->~value_type();
+            }
+          }
+
+        /**
+         * @internal
+         * @brief Move the contained items down to the lower end of the backing store
+         *
+         * @since 1.0.1
+         */
+        void shift_down()
+          {
+          shift_down_impl<value_type>();
+          m_current = 0;
+          }
+
+        /**
+         * @internal
+         * @brief Concrete element shifting implementation for trivially-copyable element types
+         *
+         * @since 1.0.1
+         */
+        template<typename Dependent>
+        detect_trivially_copyable<Dependent> shift_down_impl()
+          {
+          std::memmove(base_pointer(), dequeue_pointer(), m_size * sizeof(ValueType));
+          }
+
+        /**
+         * @internal
+         * @brief Concrete element shifting implementation for non-trivially-copyable element types
+         *
+         * @since 1.0.1
+         */
+        template<typename Dependent>
+        detect_non_trivially_copyable<Dependent> shift_down_impl()
+          {
+          for(std::size_t idx{}; idx < m_size; ++idx)
+            {
+            auto const sourcePointer = dequeue_pointer() + idx;
+            new (base_pointer() + idx) value_type{std::move(*sourcePointer)};
+            sourcePointer->~value_type();
+            }
+          }
+
+        /**
+         * @internal
+         * @brief Resize the backing store to fit the given number of elements
+         *
+         * @since 1.0.1
+         */
+        void resize(std::size_t const elements)
+          {
+          auto newBackingStore = allocate(elements);
+
+          transfer<value_type>(newBackingStore);
+
+          m_backingStore = std::move(newBackingStore);
+          m_current = 0;
+          m_capacity = elements;
+          }
+
+        /**
+         * @internal
+         * @brief Concrete implementation of the element transfer for trivially-copyable element type
+         *
+         * @since 1.0.1
+         */
+        template<typename Dependent>
+        detect_trivially_copyable<Dependent> transfer(std::unique_ptr<char[]> & targetStore)
+          {
+          std::memcpy(targetStore.get(), dequeue_pointer(), element_size * m_size);
+          }
+
+        /**
+         * @internal
+         * @brief Concrete implementation of the element transfer for non-trivially-copyable element type
+         *
+         * @since 1.0.1
+         */
+        template<typename Dependent>
+        detect_non_trivially_copyable<Dependent> transfer(std::unique_ptr<char[]> & targetStore)
+          {
+          auto target = reinterpret_cast<value_type *>(targetStore.get());
+
+          for(std::size_t idx{}; idx < m_size; ++idx, ++target)
+            {
+            auto const sourcePointer = dequeue_pointer() + idx;
+            new (target) value_type{std::move(*sourcePointer)};
+            sourcePointer->~value_type();
+            }
+          }
+
+        /**
+         * @internal
+         * @brief Allocate a memory region for a given number of elements
+         *
+         * @since 1.0.1
+         */
+        std::unique_ptr<char[]> allocate(std::size_t elements)
+          {
+          return std::unique_ptr<char[]>{new char[element_size * elements]};
+          }
+
+        /**
+         * @internal
+         * @brief Get a pointer to the first element to be dequeued
+         *
+         * @since 1.0.1
+         */
+        pointer dequeue_pointer() const
+          {
+          return base_pointer() + m_current;
+          }
+
+        /**
+         * @internal
+         * @brief Get a pointer to slot where the first element can be enqueued
+         */
+        pointer enqueue_pointer() const
+          {
+          return dequeue_pointer() + m_size;
+          }
+
+        /**
+         * @internal
+         * @brief Get a pointer to the base of the backing store
+         *
+         * @since 1.0.1
+         */
+        value_type * base_pointer() const
+          {
+          return reinterpret_cast<value_type *>(m_backingStore.get());
+          }
+
+        /**
+         * @internal
+         * @brief Get the number of free elements currently available
+         *
+         * @since 1.0.1
+         */
+        std::size_t available() const
+          {
+          return m_capacity - m_current - m_size;
+          }
+
+        std::atomic_size_t m_capacity{};
         std::atomic_size_t m_current{};
-        std::vector<ValueType> m_backingStore{};
+        std::atomic_size_t m_size{};
+        std::unique_ptr<char[]> m_backingStore{};
         std::mutex mutable m_mutex{};
         std::condition_variable m_hasElements{};
       };
