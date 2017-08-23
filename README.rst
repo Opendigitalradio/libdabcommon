@@ -57,7 +57,7 @@ following commands from the source root:
 
   mkdir -p build
   cd build
-  cmake .. [DEPENDENCY_RESOLUTION_MECHANISM]
+  cmake .. -DDABCOMMON_ENABLE_TESTS=On [DEPENDENCY_RESOLUTION_MECHANISM]
   cmake --build .
 
 Locally Exporting the Conan Package
