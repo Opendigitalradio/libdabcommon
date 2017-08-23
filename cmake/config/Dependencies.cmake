@@ -2,9 +2,12 @@ include("ExternalDependency")
 
 set(${${PROJECT_NAME}_UPPER}_DEPS)
 
-if(${${PROJECT_NAME}_UPPER}_DEPS_VIA STREQUAL "conan")
+if(EXTERNAL_DEPS_VIA STREQUAL "conan")
   if(${${PROJECT_NAME}_UPPER}_ENABLE_TESTS)
     include("ConanPackages")
+    if(${${${PROJECT_NAME}_UPPER}_ENABLE_TESTS})
+      list(APPEND CONAN_OPTIONS ${CONAN_OPTIONS} libdabcommon:test=True)
+    endif()
     install_conan_packages(SYSTEM_HEADERS
       PKGOPTS ${CONAN_OPTIONS}
       )
@@ -12,7 +15,7 @@ if(${${PROJECT_NAME}_UPPER}_DEPS_VIA STREQUAL "conan")
       CONAN_PKG::CUTEX
       )
   endif()
-elseif(${${PROJECT_NAME}_UPPER}_DEPS_VIA STREQUAL "git")
+elseif(EXTERNAL_DEPS_VIA STREQUAL "git")
   set(${${PROJECT_NAME}_UPPER}_DEPENDENCIES_DIR "${CMAKE_SOURCE_DIR}/external"
     CACHE PATH
     "External depencies source path"
@@ -28,5 +31,5 @@ elseif(${${PROJECT_NAME}_UPPER}_DEPS_VIA STREQUAL "git")
       )
   endif()
 else()
-  message(FATAL_ERROR "Unknown dependency resolution mechanism '${${${PROJECT_NAME}_UPPER}_DEPS_VIA}'")
+  message(FATAL_ERROR "Unknown dependency resolution mechanism 'EXTERNAL_DEPS_VIA}'")
 endif()

@@ -1,5 +1,17 @@
 include(CMakeParseArguments)
 
+set(EXTERNAL_DEPS_VIA "git"
+  CACHE STRING
+  "The dependency resolution mechanism to use for ${PROJECT_NAME}"
+  )
+
+set_property(CACHE EXTERNAL_DEPS_VIA
+  PROPERTY
+  STRINGS
+  "git"
+  "conan"
+  )
+
 macro(EXTERNAL_DEPENDENCY)
   set(OPTS   CMAKE)
   set(SVARGS NAME LIBNAME REPO)

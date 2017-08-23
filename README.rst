@@ -33,7 +33,7 @@ resolution using the following argument to CMake:
 
 .. code:: text
 
-  -DDABCOMMON_DEPS_VIA=conan
+  -DEXTERNAL_DEPS_VIA=conan
 
 Dependency Resolution via Git
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -45,7 +45,7 @@ dependencies of DABCommon, you can use the following argument to CMake:
 
 .. code:: text
 
-  -DDABCOMMON_DEPS_VIA=git
+  -DEXTERNAL_DEPS_VIA=git
 
 Running the Unit Tests
 ----------------------
