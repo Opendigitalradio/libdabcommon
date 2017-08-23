@@ -65,7 +65,8 @@ function(install_conan_packages)
   execute_process(COMMAND conan
     install
     --build=missing
-    --generator=cmake
+    -g txt
+    -g cmake
     -s compiler=${_COMPILER}
     -s compiler.version=${_COMPILER_VERSION}
     -s compiler.libcxx=${_LIBCXX}

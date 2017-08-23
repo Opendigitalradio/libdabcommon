@@ -14,14 +14,38 @@ Dependencies
 
 DABCommon has no dependencies per se. However, if you would like to build the
 unit tests you will need `CUTE <https://github.com/PeterSommerlad/CUTE>`_ and
-`CUTEX <https://github.com/fmorgner/CUTEX>`_. Both of these libraries are
-available via conan. In order for conan to be able to resolve the dependencies,
-you will currently need to add an additional conan remote, using the following
-command:
+`CUTEX <https://github.com/fmorgner/CUTEX>`_. There are currently two resolution
+mechanisms available in DABCommon, using Git or Conan.
+
+Dependency Resolution via Conan
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Dependency resolution via Conan requires you to add an additional Conan remote.
+This remote contains packages for CUTE and CUTEX. To register this new remote
+with conan, you can use the following command:
 
 .. code:: bash
 
   conan remote add conan-fmorgner https://api.bintray.com/conan/fmorgner/conan-fmorgner
+
+After you have registered this new remote, you can select Conan-based dependency
+resolution using the following argument to CMake:
+
+.. code:: text
+
+  -DDABCOMMON_DEPS_VIA=conan
+
+Dependency Resolution via Git
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+As an alternative to Conan, you can also use Git for dependency resolution.
+Since this is the default configuration, you don't need to setup anything.
+However, if you would like to be explicit about using git to resolve the
+dependencies of DABCommon, you can use the following argument to CMake:
+
+.. code:: text
+
+  -DDABCOMMON_DEPS_VIA=git
 
 Running the Unit Tests
 ----------------------
@@ -33,7 +57,7 @@ following commands from the source root:
 
   mkdir -p build
   cd build
-  cmake ..
+  cmake .. [DEPENDENCY_RESOLUTION_MECHANISM]
   cmake --build .
 
 Locally Exporting the Conan Package

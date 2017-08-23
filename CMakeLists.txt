@@ -3,48 +3,20 @@ project("DABCommon"
   LANGUAGES CXX
   VERSION 1.0.1)
 
-string(TOUPPER ${PROJECT_NAME} ${PROJECT_NAME}_UPPER)
-string(TOLOWER ${PROJECT_NAME} ${PROJECT_NAME}_LOWER)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
 
-option(${${PROJECT_NAME}_UPPER}_ENABLE_TESTS
-  "Build and run the ${PROJECT_NAME} unit tests."
-  OFF
-  )
-
-option(${${PROJECT_NAME}_UPPER}_SKIP_CONAN
-  "Skip installing the dependencies for ${PROJECT_NAME} through conan."
-  OFF
-  )
-
-if(${${${PROJECT_NAME}_UPPER}_ENABLE_TESTS})
-  set(CONAN_OPTIONS ${CONAN_OPTIONS} libdabcommon:test=True)
-  get_directory_property(${PROJECT_NAME}_HAS_PARENT PARENT_DIRECTORY)
-  if(${PROJECT_NAME}_HAS_PARENT)
-    set(CONAN_OPTIONS ${CONAN_OPTIONS} PARENT_SCOPE)
-  endif()
-endif()
-
-list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/modules")
-set(CXX_VERSION "c++11")
-
-include("CompilerSetup")
-
-if(NOT ${${PROJECT_NAME}_UPPER}_SKIP_CONAN)
-  include("ConanPackages")
-  install_conan_packages(SYSTEM_HEADERS
-    PKGOPTS ${CONAN_OPTIONS}
-    )
-endif()
+include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/config/Base.cmake")
+include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/config/Options.cmake")
+include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/config/Dependencies.cmake")
 
 find_package(Threads REQUIRED)
 
 add_subdirectory("include")
 
-if(${${PROJECT_NAME}_UPPER}_ENABLE_TESTS AND NOT BUILD_DOCUMENTATION_ONLY)
+if(${${PROJECT_NAME}_UPPER}_ENABLE_TESTS)
   include("CUTE")
   include_directories(SYSTEM
-    $<TARGET_PROPERTY:CONAN_PKG::CUTE,INTERFACE_INCLUDE_DIRECTORIES>
-    $<TARGET_PROPERTY:CONAN_PKG::CUTEX,INTERFACE_INCLUDE_DIRECTORIES>
+    ${CUTEX_INCLUDE_DIRECTORIES}
     )
   add_subdirectory("test")
 endif()
