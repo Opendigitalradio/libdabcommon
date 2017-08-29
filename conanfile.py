@@ -4,7 +4,7 @@ from conans import ConanFile
 
 class LibDABCommonConan(ConanFile):
     name = 'libdabcommon'
-    version = '1.0.1'
+    version = '1.0.2'
     description = (
         'The common subsystem for the ODR DAB data toolkit, that provides '
         'types, functions, and constants used throughout the ODR DAB data '
