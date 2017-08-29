@@ -20,9 +20,3 @@ if(${${PROJECT_NAME}_UPPER}_ENABLE_TESTS)
     )
   add_subdirectory("test")
 endif()
-
-install(EXPORT ${PROJECT_NAME}
-  DESTINATION "share/${${PROJECT_NAME}_LOWER}/cmake"
-  )
-
-export(EXPORT ${PROJECT_NAME})
