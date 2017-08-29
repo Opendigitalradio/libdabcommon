@@ -16,18 +16,11 @@ if(EXTERNAL_DEPS_VIA STREQUAL "conan")
       )
   endif()
 elseif(EXTERNAL_DEPS_VIA STREQUAL "git")
-  set(${${PROJECT_NAME}_UPPER}_DEPENDENCIES_DIR "${CMAKE_SOURCE_DIR}/external"
-    CACHE PATH
-    "External depencies source path"
-    FORCE
-    )
-
   if(${${PROJECT_NAME}_UPPER}_ENABLE_TESTS)
     set(CUTEX_ENABLE_TESTS OFF)
     external_dependency(CMAKE
       NAME "CUTEX"
       REPO "https://github.com/fmorgner/CUTEX"
-      LIBNAME "CUTEX"
       )
   endif()
 else()
