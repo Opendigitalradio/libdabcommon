@@ -15,7 +15,7 @@ matrix:
             - cmake-data
             - ninja-build
       env:
-        - CXX=g++-6
+        - CXX_COMPILER=g++-6
 
     - compiler: clang
       addons:
@@ -31,13 +31,13 @@ matrix:
             - cmake-data
             - ninja-build
       env:
-        - CXX=clang++-3.8
+        - CXX_COMPILER=clang++-3.8
 
-script: |
-  mkdir -p build
-  cd build
-  cmake .. -GNinja\
-           -DCMAKE_BUILD_TYPE=Release \
-           -DCUTE_RUN_DURING_BUILD=Off \
-           -DDABCOMMON_ENABLE_TESTS=On
-  cmake --build . --target cute_all
+before_install:
+  - export CXX=${CXX_COMPILER}
+
+script:
+  - mkdir -p build
+  - cd build
+  - cmake .. -GNinja -DCMAKE_BUILD_TYPE=Release -DCUTE_RUN_DURING_BUILD=Off -DDABCOMMON_ENABLE_TESTS=On
+  - cmake --build . --target cute_all
