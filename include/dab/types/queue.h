@@ -253,7 +253,7 @@ namespace dab
       /**
        * @brief Try to dequeue a block of elements from the queue
        *
-       * @note Tis call never blocks
+       * @note This call never blocks
        *
        * @author Felix Morgner
        * @since  1.0.1
@@ -269,6 +269,17 @@ namespace dab
 
         do_dequeue_block(block);
         return true;
+        }
+
+      /**
+       * @brief Clear the contents of the queue
+       *
+       * @since 1.0.3
+       */
+      void clear()
+        {
+        auto lock = std::unique_lock<std::mutex>{m_mutex};
+        m_size = m_current = 0;
         }
 
       private:
